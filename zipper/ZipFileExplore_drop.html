@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head lang="ja">
+    <meta charset="UTF-8">
+    <style type="text/css">
+        #drop_zone {
+            border: 2px dashed #bbb;
+            border-radius: 5px;
+            color: #bbb;
+            padding: 100px;
+            text-align: center;
+            font-size: xx-large;
+        }
+    </style>
+    <script type="text/javascript" src="./js/lib/jszip.js"></script>
+    <script type="text/javascript" src="./js/lib/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="./js/myFunction.js"></script>
+    <title>Javascript ZipJs, FileAPI Test</title>
+</head>
+<body>
+<h1>Zipファイル エクスプローラー(ドラッグアンドドロップ編)</h1>
+<div id="drop_zone">ここにファイルをドロップ</div>
+<div id="result">
+</div>
+<script type="text/javascript">
+
+   $("#drop_zone").on("dragover", function(evt) {
+    evt.stopPropagation();
+    evt.preventDefault();
+    evt.originalEvent.dataTransfer.dropEffect = 'copy';
+   });
+
+   $("#drop_zone").on("drop", function(evt) {
+
+       var result = $("#result");
+       result.html('');
+
+       evt.stopPropagation();
+       evt.preventDefault();
+
+       var files = evt.originalEvent.dataTransfer.files;
+
+       for (var i = 0, f; f = files[i]; i++) {
+           var output = [];
+           if(getExtention(f.name) != "zip") {
+               output.push('<ul><li><strong style="background-color: #ffcc00 ; color: #0000ff" >',"ZIPファイルをドロップしてください。" ,escape(f.name), '</strong> - ',
+                    f.size, ' bytes, last modified: ',
+                    f.lastModifiedDate.toLocaleDateString(), '</li></ul>');
+               result.append(output.join(''));
+               continue;
+           } else {
+               var reader = new FileReader();
+               reader.onload = (function(theFile, Result, Output) {
+                   return function(e) {
+
+                       Output.push('<ul><li><strong>', escape(theFile.name), '</strong> (', theFile.type || 'n/a', ') - ',
+                               theFile.size, ' bytes, last modified: ',
+                               theFile.lastModifiedDate.toLocaleDateString());
+
+                        var zip = new JSZip(e.target.result);
+                        $.each(zip.files, function (index, zipEntry) {
+                            Output.push('<ul><li><strong>', escape(zipEntry.name), '</strong></li></ul>');
+                        });
+                        Output.push('</li>','</ul>');
+                        Result.append(Output.join(''));
+                }})(f, result, output);
+
+               reader.readAsArrayBuffer(f);
+           }
+       }
+   });
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head lang="ja">
+    <meta charset="UTF-8">
+    <title>Javascript ZipJs, FileAPI Test</title>
+    <script type="text/javascript" src="./js/lib/jszip.js"></script>
+    <script type="text/javascript" src="./js/lib/jquery-1.8.3.min.js"></script>
+    <script type="text/javascript" src="./js/myFunction.js"></script>
+</head>
+<body>
+<h1>Zipファイル エクスプローラ(inputタグ編)</h1>
+<input type="file" id="file" name="file" />
+<div id="result"></div>
+<script type="text/javascript">
+
+    var $result = $("#result");
+    $("#file").on("change", function(evt) {
+    // ID:resultを初期化
+    $result.html("");
+
+    var files = evt.target.files;
+    for (var i = 0, f; f = files[i]; i++) {
+        if(getExtention(f.name) != "zip") {
+            $result.append($("<h4>",{
+            text: "ZIPファイルを選択してください。"
+            }));
+            return;
+        }
+
+        var reader = new FileReader();
+
+        reader.onload = (function(theFile) {
+            return function(e) {
+
+            var $title = $("<h4>", {
+                text : theFile.name
+            });
+            $result.append($title);
+            var $fileContent = $("<ul>");
+            try {
+                var dateBefore = new Date();
+                // read the content of the file with JSZip
+                var zip = new JSZip(e.target.result);
+                var dateAfter = new Date();
+
+                $title.append($("<span>", {
+                    text:" (parsed in " + (dateAfter - dateBefore) + "ms)"
+                }));
+
+                // that, or a good ol' for(var entryName in zip.files)
+                $.each(zip.files, function (index, zipEntry) {
+                    $fileContent.append($("<li>", {
+                        text : zipEntry.name
+                    }));
+                // the content is here : zipEntry.asText()
+                });
+                // end of the magic !
+
+            } catch(e) {
+                $fileContent = $("<div>", {
+                    text : "Error reading " + theFile.name + " : " + e.message
+                });
+            }
+            $result.append($fileContent);
+            }
+        // fは、function(theFile)~の引数.つまり、theFile
+        })(f);
+
+        // read the file !
+        // readAsArrayBuffer and readAsBinaryString both produce valid content for JSZip.
+        reader.readAsArrayBuffer(f);
+        // reader.readAsBinaryString(f);
+    }
+});
+
+
+</script>
+</body>
+</html>
