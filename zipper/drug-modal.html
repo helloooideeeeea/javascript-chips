@@ -87,7 +87,8 @@
             if(extension == 'png' || extension == 'jpeg' || extension == 'gif' || extension == 'jpg' || extension == 'JPG') {
 
                 var reader = new FileReader();
-                reader.onload = (function(theFile, count, OUTPUT) {
+                count=0;
+                reader.onload = (function(theFile,OUTPUT) {
 
                     return function(e) {
 
@@ -107,8 +108,8 @@
                         $('#my-slides-image').
                                 append('<div class="item"><img src="'+ e.target.result+'" alt="'+ escape(theFile.name) +'">'+'<div class="carousel-caption"></div></div>');
                     }
-
-                }})(f,i,output);
+                    count++;
+                }})(f,output);
                 reader.readAsDataURL(f);
 
             } else {
