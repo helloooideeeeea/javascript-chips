@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <html>
-<head lang="en">
+<head lang="ja">
     <meta charset="UTF-8">
     <title>ドラッグアンドドロップ　イメージ　モーダル表示</title>
     <script type="text/javascript" src="./js/lib/jquery-1.9.0.js"></script>
     <script type="text/javascript" src="./bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="./js/myFunction.js"></script>
-    <link rel="stylesheet" type="text/css" href="./bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="./bootstrap/css/bootstrap-theme.css">
+    <link rel="stylesheet" type="text/css" href="./bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="./bootstrap/css/bootstrap-theme.min.css">
     <style type="text/css">
         #drop_zone {
             border: 2px dashed #bbb;
@@ -61,6 +61,10 @@
 </div>
 
 <script type="text/javascript">
+    $('.carousel').carousel({
+        interval: false
+    })
+
     $("#drop_zone").on("dragover", function(evt) {
         evt.stopPropagation();
         evt.preventDefault();
