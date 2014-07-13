@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head lang="ja">
+    <meta charset="UTF-8">
+    <title>bootstrap test</title>
+    <script type="text/javascript" src="./js/lib/jquery-1.9.0.js"></script>
+    <script type="text/javascript" src="./bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./js/myFunction.js"></script>
+    <link rel="stylesheet" type="text/css" href="./bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="./bootstrap/css/bootstrap-theme.min.css">
+    <style type="text/css">
+        #drop_zone {
+            border: 2px dashed #bbb;
+            border-radius: 5px;
+            color: #bbb;
+            padding: 100px;
+            text-align: center;
+            font-size: xx-large;
+        }
+    </style>
+</head>
+<body>
+
+<div id="drop_zone">ここにイメージファイルをドロップ</div>
+<div id="list"></div>
+<!-- Button trigger modal -->
+<button class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">イメージを確認</button>
+
+<!-- Modal -->
+<div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+
+            <div class="modal-body">
+                <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                    <!-- Indicators -->
+                    <ol class="carousel-indicators">
+                        <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                        <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                        <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                    </ol>
+
+                    <!-- Wrapper for slides -->
+                    <div id="my-slides-image" class="carousel-inner">
+
+                    </div>
+
+                    <!-- Controls -->
+                    <a class="left carousel-control" href="#carousel-example-generic" role="button" data-slide="prev">
+                        <span class="glyphicon glyphicon-chevron-left"></span>
+                    </a>
+                    <a class="right carousel-control" href="#carousel-example-generic" role="button" data-slide="next">
+                        <span class="glyphicon glyphicon-chevron-right"></span>
+                    </a>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $("#drop_zone").on("dragover", function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        evt.originalEvent.dataTransfer.dropEffect = 'copy';
+    });
+
+    $("#drop_zone").on("drop", function(evt) {
+        evt.stopPropagation();
+        evt.preventDefault();
+        $('#list').html('');
+        $('#my-slides-image').html('');
+
+        var files = evt.originalEvent.dataTransfer.files;
+
+        for (var i = 0, f; f = files[i]; i++) {
+            var output = [];
+            var extension = getExtention(f.name);
+
+            if(extension == 'png' || extension == 'jpeg' || extension == 'gif') {
+
+                var reader = new FileReader();
+
+                reader.onload = (function(theFile, count, OUTPUT) {
+                    return function(e) {
+
+                     $('#list').append('<img src="'+ e.target.result+'" width="100" height="80" alt="'+ escape(theFile.name) +'">');
+                     OUTPUT.push('<li><strong>',escape(theFile.name), '</strong> - ',
+                                theFile.size, ' bytes, last modified: ',
+                                theFile.lastModifiedDate.toLocaleDateString(), '</li>');
+                        $('#list').append("<ul>"+OUTPUT.join('')+"</ul>");
+                    if(count == 0) {
+                        $('#my-slides-image').
+                                append('<div class="item active"><img src="'+ e.target.result+'" alt="'+ escape(theFile.name) +'">'+'<div class="carousel-caption"></div></div>');
+                    } else {
+                        $('#my-slides-image').
+                                append('<div class="item"><img src="'+ e.target.result+'" alt="'+ escape(theFile.name) +'">'+'<div class="carousel-caption"></div></div>');
+                    }
+                }})(f,i,output);
+                reader.readAsDataURL(f);
+            } else {
+                output.push('<li><strong style="background-color: #ffcc00 ; color: #0000ff" >',"画像ファイルをドロップしてください。" ,escape(f.name), '</strong> - ',
+                        f.size, ' bytes, last modified: ',
+                        f.lastModifiedDate.toLocaleDateString(), '</li>');
+                $('#list').append("<ul>"+output.join('')+"</ul>");
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
