@@ -83,7 +83,7 @@
             if(extension == 'png' || extension == 'jpeg' || extension == 'gif' || extension == 'jpg' || extension == 'JPG') {
 
                 var reader = new FileReader();
-                reader.onloadend = (function(theFile, k, OUTPUT) {
+                reader.onload = (function(theFile, count, OUTPUT) {
 
                     return function(e) {
 
@@ -92,14 +92,14 @@
                                 theFile.size, ' bytes, last modified: ',
                                 theFile.lastModifiedDate.toLocaleDateString(), '</li>');
                         $('#list').append("<ul>"+OUTPUT.join('')+"</ul>");
-                    if(k == 0) {
+                    if(count == 0) {
                         $('#my-slides-indicator').
-                                append('<li data-target="#carousel-example-generic" data-slide-to="'+k+'" class="active"></li>');
+                                append('<li data-target="#carousel-example-generic" data-slide-to="'+count+'" class="active"></li>');
                         $('#my-slides-image').
                                 append('<div class="item active"><img src="'+ e.target.result+'" alt="'+ escape(theFile.name) +'">'+'<div class="carousel-caption"></div></div>');
                     } else {
                         $('#my-slides-indicator').
-                                append('<li data-target="#carousel-example-generic" data-slide-to="'+k+'"></li>');
+                                append('<li data-target="#carousel-example-generic" data-slide-to="'+count+'"></li>');
                         $('#my-slides-image').
                                 append('<div class="item"><img src="'+ e.target.result+'" alt="'+ escape(theFile.name) +'">'+'<div class="carousel-caption"></div></div>');
                     }
