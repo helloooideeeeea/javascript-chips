@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>ドラッグアンドドロップ　イメージ　モーダル表示</title>
     <script type="text/javascript" src="./js/lib/jquery-1.9.0.js"></script>
-    <script type="text/javascript" src="./bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="./bootstrap/js/bootstrap.js"></script>
     <script type="text/javascript" src="./js/myFunction.js"></script>
     <link rel="stylesheet" type="text/css" href="./bootstrap/css/bootstrap.css">
-    <link rel="stylesheet" type="text/css" href="./bootstrap/css/bootstrap-theme.min.css">
+    <link rel="stylesheet" type="text/css" href="./bootstrap/css/bootstrap-theme.css">
     <style type="text/css">
         #drop_zone {
             border: 2px dashed #bbb;
@@ -41,7 +41,6 @@
 
                     <!-- Wrapper for slides -->
                     <div id="my-slides-image" class="carousel-inner">
-
                     </div>
 
                     <!-- Controls -->
@@ -73,6 +72,7 @@
         evt.preventDefault();
         $('#list').html('');
         $('#my-slides-image').html('');
+        $('#my-slides-indicator').html('');
         $("#myCheckBtn").css("visibility", "visible");
         var files = evt.originalEvent.dataTransfer.files;
 
@@ -80,11 +80,11 @@
             var output = [];
             var extension = getExtention(f.name);
 
-            if(extension == 'png' || extension == 'jpeg' || extension == 'gif' || extension == 'jpg') {
+            if(extension == 'png' || extension == 'jpeg' || extension == 'gif' || extension == 'jpg' || extension == 'JPG') {
 
                 var reader = new FileReader();
+                reader.onloadend = (function(theFile, k, OUTPUT) {
 
-                reader.onload = (function(theFile, count, OUTPUT) {
                     return function(e) {
 
                      $('#list').append('<img src="'+ e.target.result+'" width="100" height="80" alt="'+ escape(theFile.name) +'">');
@@ -92,17 +92,18 @@
                                 theFile.size, ' bytes, last modified: ',
                                 theFile.lastModifiedDate.toLocaleDateString(), '</li>');
                         $('#list').append("<ul>"+OUTPUT.join('')+"</ul>");
-                    if(count == 0) {
+                    if(k == 0) {
                         $('#my-slides-indicator').
-                                append('<li data-target="#carousel-example-generic" data-slide-to="'+count+'" class="active"></li>');
+                                append('<li data-target="#carousel-example-generic" data-slide-to="'+k+'" class="active"></li>');
                         $('#my-slides-image').
                                 append('<div class="item active"><img src="'+ e.target.result+'" alt="'+ escape(theFile.name) +'">'+'<div class="carousel-caption"></div></div>');
                     } else {
                         $('#my-slides-indicator').
-                                append('<li data-target="#carousel-example-generic" data-slide-to="'+count+'"></li>');
+                                append('<li data-target="#carousel-example-generic" data-slide-to="'+k+'"></li>');
                         $('#my-slides-image').
                                 append('<div class="item"><img src="'+ e.target.result+'" alt="'+ escape(theFile.name) +'">'+'<div class="carousel-caption"></div></div>');
                     }
+
                 }})(f,i,output);
                 reader.readAsDataURL(f);
 
